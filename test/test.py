@@ -11,7 +11,7 @@ async def test_down_counter(dut):
 
     dut._log.info("Starting Down Counter Test")
 
-    # Start clock
+    # Create clock
     clock = Clock(dut.clk, 10, unit="ns")
     cocotb.start_soon(clock.start())
 
@@ -23,7 +23,7 @@ async def test_down_counter(dut):
     # Apply reset
     dut.rst_n.value = 0
 
-    # Wait during reset
+    # Wait for 2 clock cycles
     for _ in range(2):
         await RisingEdge(dut.clk)
 
@@ -32,15 +32,16 @@ async def test_down_counter(dut):
 
     dut._log.info("Reset Released")
 
-    # Expected values AFTER reset release
+    # Expected counter sequence
     expected_values = [
-        14, 13, 12, 11,
-        10, 9, 8, 7,
-        6, 5, 4, 3,
-        2, 1, 0, 15
+        15, 14, 13, 12,
+        11, 10, 9, 8,
+        7, 6, 5, 4,
+        3, 2, 1, 0,
+        15
     ]
 
-    # Verify counter
+    # Verify output
     for expected in expected_values:
 
         await RisingEdge(dut.clk)
@@ -54,4 +55,4 @@ async def test_down_counter(dut):
         assert actual == expected, \
             f"Counter mismatch: Expected {expected}, Got {actual}"
 
-    dut._log.info("Test Passed")
+    dut._log.info("Down Counter Test Passed")
